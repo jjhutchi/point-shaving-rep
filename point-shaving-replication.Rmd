@@ -2,7 +2,7 @@
 title: 'Replicating Point Shaving: Corruption in NCAA Basketball'
 author: "Jordan Hutchings"
 date: "22/04/2021"
-output: github_document
+output: rmarkdown::github_document
 ---
 
 # Replicating Point Shaving: Corruption in NCAA Basketball with NBA data
