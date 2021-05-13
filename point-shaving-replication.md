@@ -1,9 +1,7 @@
-Replicating Point Shaving: Corruption in NCAA Basketball
+Replicating Point Shaving: Corruption in NCAA Basketball with NBA Data
 ================
 Jordan Hutchings
 22/04/2021
-
-# Replicating Point Shaving: Corruption in NCAA Basketball with NBA data
 
 The purpose of this document is to replicate the study, [Point Shaving:
 Corruption in NCAA

@@ -1,11 +1,9 @@
 ---
-title: 'Replicating Point Shaving: Corruption in NCAA Basketball'
+title: 'Replicating Point Shaving: Corruption in NCAA Basketball with NBA Data'
 author: "Jordan Hutchings"
 date: "22/04/2021"
 output: rmarkdown::github_document
 ---
-
-# Replicating Point Shaving: Corruption in NCAA Basketball with NBA data
 
 The purpose of this document is to replicate the study, 
 [Point Shaving: Corruption in NCAA Basketball](https://users.nber.org/~jwolfers/papers/PointShaving.pdf)
