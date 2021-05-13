@@ -32,10 +32,17 @@ df <- read_dta('betting_odds.dta')
 The dataset, while very clean, requires us to construct the spread between the 
 difference in scores and the game spread. 
 
+For some reason, the home team names are abreviated, while the away team 
+names are in a more readable format. I've created the dictionary `names.csv` 
+which maps the home_team names to the away_team names, and used this to update 
+the home names.
+
 We are interested in the spread line `odds1`, the result of the spread 
 `result1`, and whether the home or away team is favourited. We can deduce 
 the better team from the sign of `odds1`, where a positive number indicates 
 the home team is favourited, and a negative number favours the away team. 
+We can quickly check this by regressing the score difference on the vegas spread. 
+A positive coefficient tells us the better the home team is, the higher the spread.
 
 We will construct a variable for the winning margin less the spread, 
 and a dummy variable for games with a 12 point spread or greater. 
@@ -49,7 +56,8 @@ df <- select(df, -fullname)
 
 # how do we interpret odds1?
 df <- mutate(df, score_diff = home_score - away_score) 
-lm(score_diff ~ odds1, data = df) #positibe beta => higher odds1, more favourited team 1 is.
+# positive beta => the higher odds1, the more favourited team 1 is.
+lm(score_diff ~ odds1, data = df) 
 
 
 # grab favourites, check if favourites won, and by how much relative to line
@@ -82,7 +90,9 @@ cover the spread for games with a 12 point or greater spread.
 The next piece to examine is why choose a spread of 12 points. Why not 
 11 or 13 points? To do this, lets look at the probability of a team covering 
 the spread relative to the size of the spread for teams who do and do not 
-cover. This will resemble Figure 3 of the paper. 
+cover. There is an obvious dropoff after the 12.5 point threshold. Since 
+we are using NBA and not NCAA data, it is reasonable to expect the point threshold 
+to differ slightly.
 
 ```{r, message=FALSE, warning=FALSE}
 df %>%
@@ -104,8 +114,10 @@ df %>%
       theme_bw()
 ```
 
-
-What does each team's probability of covering the spread look like? 
+Last, we can look at each team on their own to see how often they are covering 
+the spread. The third plot may be the most informative, showing the proportion 
+of times each team covered the spread with a less than 12 point spread, and 
+with a 12 or greater point spread. 
 ```{r, message=FALSE, warning=FALSE}
 # what is the cover rate for winning teams conditional on the spread?
 df %>%
