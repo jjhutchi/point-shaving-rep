@@ -1,26 +1,20 @@
----
-title: 'Replicating Point Shaving: Corruption in NCAA Basketball'
-author: "Jordan Hutchings"
-date: "22/04/2021"
-output: github_document
----
+Replicating Point Shaving: Corruption in NCAA Basketball
+================
+Jordan Hutchings
+22/04/2021
 
 # Replicating Point Shaving: Corruption in NCAA Basketball with NBA data
 
-The purpose of this document is to replicate the study, 
-[Point Shaving: Corruption in NCAA Basketball](https://users.nber.org/~jwolfers/papers/PointShaving.pdf)
+The purpose of this document is to replicate the study, [Point Shaving:
+Corruption in NCAA
+Basketball](https://users.nber.org/~jwolfers/papers/PointShaving.pdf)
 
-The article author Professor Justin Wolfers, provides betting line data for the 
-1991 - 2004 NBA season, similar to the NCAA Div 1 data set used in the paper being 
-replicated. The NBA dataset contains 15,507 games while the NCAA dataset contains 
-44,120 games from 1989 - 2005. 
-```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  fig.path = "README_figs/README-"
-)
-```
+The article author Professor Justin Wolfers, provides betting line data
+for the 1991 - 2004 NBA season, similar to the NCAA Div 1 data set used
+in the paper being replicated. The NBA dataset contains 15,507 games
+while the NCAA dataset contains 44,120 games from 1989 - 2005.
 
-```{r, warning=FALSE, message=FALSE}
+``` r
 # set directory and load packages and read in data
 setwd("C:/Users/user/Desktop/ML&DS/projects/sports_analyics")
 
@@ -30,24 +24,35 @@ library(ggplot2)
 df <- read_dta('betting_odds.dta')
 ```
 
-## clean the data 
-The dataset, while very clean, requires us to construct the spread between the 
-difference in scores and the game spread. 
+## clean the data
 
-We are interested in the spread line `odds1`, the result of the spread 
-`result1`, and whether the home or away team is favourited. We can deduce 
-the better team from the sign of `odds1`, where a positive number indicates 
-the home team is favourited, and a negative number favours the away team. 
+The dataset, while very clean, requires us to construct the spread
+between the difference in scores and the game spread.
 
-We will construct a variable for the winning margin less the spread, 
-and a dummy variable for games with a 12 point spread or greater. 
+We are interested in the spread line `odds1`, the result of the spread
+`result1`, and whether the home or away team is favourited. We can
+deduce the better team from the sign of `odds1`, where a positive number
+indicates the home team is favourited, and a negative number favours the
+away team.
 
-```{r, message=FALSE, warning=FALSE}
+We will construct a variable for the winning margin less the spread, and
+a dummy variable for games with a 12 point spread or greater.
+
+``` r
 # how do we interpret odds1?
 df <- mutate(df, score_diff = home_score - away_score) 
 lm(score_diff ~ odds1, data = df) #positibe beta => higher odds1, more favourited team 1 is.
+```
 
+    ## 
+    ## Call:
+    ## lm(formula = score_diff ~ odds1, data = df)
+    ## 
+    ## Coefficients:
+    ## (Intercept)        odds1  
+    ##     0.03123      0.96184
 
+``` r
 # grab favourites, check if favourites won, and by how much relative to line
 df <- mutate(df, 
              fav = ifelse(odds1 > 0, "H", "A"),
@@ -71,15 +76,17 @@ ggplot(df, aes(spread_margin, color = twelve)) + geom_density(size = 1) +
   theme_bw()
 ```
 
-We can see there is a significant dip in the number of teams who did not 
-cover the spread for games with a 12 point or greater spread. 
+![](README_figs/README-unnamed-chunk-3-1.png)<!-- -->
 
-The next piece to examine is why choose a spread of 12 points. Why not 
-11 or 13 points? To do this, lets look at the probability of a team covering 
-the spread relative to the size of the spread for teams who do and do not 
-cover. This will resemble Figure 3 of the paper. 
+We can see there is a significant dip in the number of teams who did not
+cover the spread for games with a 12 point or greater spread.
 
-```{r, message=FALSE, warning=FALSE}
+The next piece to examine is why choose a spread of 12 points. Why not
+11 or 13 points? To do this, lets look at the probability of a team
+covering the spread relative to the size of the spread for teams who do
+and do not cover. This will resemble Figure 3 of the paper.
+
+``` r
 df %>%
   filter(odds1 > 0) %>%
   group_by(odds1) %>%
@@ -99,9 +106,11 @@ df %>%
       theme_bw()
 ```
 
+![](README_figs/README-unnamed-chunk-4-1.png)<!-- -->
 
-What does each team's probability of covering the spread look like? 
-```{r, message=FALSE, warning=FALSE}
+What does each team’s probability of covering the spread look like?
+
+``` r
 # what is the cover rate for winning teams conditional on the spread?
 df %>%
   mutate(favourite = ifelse(fav == "H", home_team, away_team)) %>%
@@ -118,7 +127,11 @@ df %>%
            x = 'NBA Team', 
            y= 'Percentage') + 
   theme_bw()
+```
 
+![](README_figs/README-unnamed-chunk-5-1.png)<!-- -->
+
+``` r
 df %>%
   mutate(favourite = ifelse(fav == "H", home_team, away_team)) %>%
   group_by(favourite, twelve) %>%
@@ -135,7 +148,11 @@ df %>%
            y= 'Percentage') + 
   theme_bw() +
   facet_wrap(.~twelve, scales = 'free')
+```
 
+![](README_figs/README-unnamed-chunk-5-2.png)<!-- -->
+
+``` r
 df %>%
   mutate(favourite = ifelse(fav == "H", home_team, away_team)) %>%
   group_by(favourite, twelve) %>%
@@ -156,3 +173,5 @@ df %>%
            y= 'Percentage') + 
   theme_bw()  
 ```
+
+![](README_figs/README-unnamed-chunk-5-3.png)<!-- -->
