@@ -15,9 +15,6 @@ in the paper being replicated. The NBA dataset contains 15,507 games
 while the NCAA dataset contains 44,120 games from 1989 - 2005.
 
 ``` r
-# set directory and load packages and read in data
-setwd("C:/Users/user/Desktop/ML&DS/projects/sports_analyics")
-
 library(haven)
 library(dplyr)
 library(ggplot2)
@@ -39,6 +36,12 @@ We will construct a variable for the winning margin less the spread, and
 a dummy variable for games with a 12 point spread or greater.
 
 ``` r
+# quick relabeling home teams
+names <- read.csv('../names.csv')
+df <- merge(df, names, by = 'home_team')
+df$home_team <- df$fullname
+df <- select(df, -fullname)
+
 # how do we interpret odds1?
 df <- mutate(df, score_diff = home_score - away_score) 
 lm(score_diff ~ odds1, data = df) #positibe beta => higher odds1, more favourited team 1 is.
